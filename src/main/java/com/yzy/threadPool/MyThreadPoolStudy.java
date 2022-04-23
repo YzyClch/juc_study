@@ -5,6 +5,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 //import java.util.concurrent.*;
 
@@ -37,7 +38,7 @@ public class MyThreadPoolStudy {
             @Override
             public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
                 System.out.println("【拒绝策略被调用了"+((MyTask)r).taskName+"】");
-                // 不丢弃这个任务，而是直接运行任务的run方法
+                // 不丢弃这个任务，而是直接运行任务的run方法 这个策略就是main线程往下走的
                 new ThreadPoolExecutor.CallerRunsPolicy().rejectedExecution(r,executor);
                 // 抛出异常
 //                new ThreadPoolExecutor.AbortPolicy().rejectedExecution(r,executor);
@@ -63,6 +64,10 @@ public class MyThreadPoolStudy {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            if (true){
+                throw new IllegalArgumentException("抛出异常测试");
+            }
+
             System.out.println("【"+Thread.currentThread().getName()+" task end:"+taskName+"】");
             successCount++;
         }
@@ -83,6 +88,7 @@ public class MyThreadPoolStudy {
         ArrayBlockingQueue<Runnable> myBlockingQueue = makeProxyQueue();
         RejectedExecutionHandler rejectHandler = getRejectHandler();
         Runnable task = getTask();
+        System.out.println(Runtime.getRuntime().availableProcessors()); //内核数
 
 
         /**
@@ -104,6 +110,8 @@ public class MyThreadPoolStudy {
 
         for (int i = 0; i < 100; i++) {
             t.execute(new MyTask("Task:"+i));
+//            Future<?> submit = t.submit(new MyTask("Task:" + i));//异常被FutureTask的run方法try catch了，所以不会抛出
+//            submit.get()
         }
 
 //        while (true){

@@ -3,12 +3,17 @@ package com.yzy.threadPool;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+//import java.util.concurrent.*;
 
 public class MyThreadPoolStudy {
 
+    static int successCount=0;
+
     @SuppressWarnings("all")
-    public static ArrayBlockingQueue<Runnable>  makeProxyQueue(){
+    public static ArrayBlockingQueue<Runnable> makeProxyQueue(){
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(ArrayBlockingQueue.class);
         enhancer.setCallback((MethodInterceptor) (o, method, objects, methodProxy) -> {
@@ -31,21 +36,43 @@ public class MyThreadPoolStudy {
         return new RejectedExecutionHandler() {
             @Override
             public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-                System.out.println("【拒绝策略被调用了】");
+                System.out.println("【拒绝策略被调用了"+((MyTask)r).taskName+"】");
+                // 不丢弃这个任务，而是直接运行任务的run方法
+                new ThreadPoolExecutor.CallerRunsPolicy().rejectedExecution(r,executor);
+                // 抛出异常
+//                new ThreadPoolExecutor.AbortPolicy().rejectedExecution(r,executor);
+                // 把阻塞队列头部的任务抛弃，把当前任务加进去
+//                new ThreadPoolExecutor.DiscardOldestPolicy().rejectedExecution(r,executor);
+                // 方法为空，相当于直接抛弃这个任务
+//                new ThreadPoolExecutor.DiscardPolicy().rejectedExecution(r,executor);
             }
         };
     }
+
+    static class MyTask implements Runnable{
+        private String taskName;
+
+        public MyTask(String taskName){
+            this.taskName=taskName;
+        }
+        @Override
+        public void run() {
+            System.out.println("【"+Thread.currentThread().getName()+" start a task:"+taskName+"】");
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("【"+Thread.currentThread().getName()+" task end:"+taskName+"】");
+            successCount++;
+        }
+    }
+
     public static Runnable getTask(){
         return new Runnable() {
             @Override
             public void run() {
-                System.out.println("【"+Thread.currentThread().getName()+"start a task】");
-                try {
-                    TimeUnit.SECONDS.sleep(5);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                System.out.println("【"+Thread.currentThread().getName()+"task end】");
+
             }
         };
     }
@@ -76,8 +103,13 @@ public class MyThreadPoolStudy {
                 TimeUnit.SECONDS, myBlockingQueue, Executors.defaultThreadFactory(),rejectHandler);
 
         for (int i = 0; i < 100; i++) {
-            t.execute(task);
+            t.execute(new MyTask("Task:"+i));
         }
+
+//        while (true){
+//            System.out.println("当前执行完成数："+successCount);
+//        }
+
     }
 
 

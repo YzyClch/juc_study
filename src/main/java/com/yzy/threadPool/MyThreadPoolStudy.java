@@ -40,9 +40,9 @@ public class MyThreadPoolStudy {
                 System.out.println("【拒绝策略被调用了"+((MyTask)r).taskName+"】");
                 // 不丢弃这个任务，而是直接运行任务的run方法 这个策略就是main线程往下走的
                 new ThreadPoolExecutor.CallerRunsPolicy().rejectedExecution(r,executor);
-                // 抛出异常
+                // 线程池默认的拒绝策略：抛出异常
 //                new ThreadPoolExecutor.AbortPolicy().rejectedExecution(r,executor);
-                // 把阻塞队列头部的任务抛弃，把当前任务加进去
+                // 把阻塞队列头部的任务抛弃(也就是抛弃等待时间最久的任务)，把当前任务加进去
 //                new ThreadPoolExecutor.DiscardOldestPolicy().rejectedExecution(r,executor);
                 // 方法为空，相当于直接抛弃这个任务
 //                new ThreadPoolExecutor.DiscardPolicy().rejectedExecution(r,executor);

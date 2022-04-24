@@ -113,7 +113,10 @@ public class MyThreadPoolStudy {
 //            Future<?> submit = t.submit(new MyTask("Task:" + i));//异常被FutureTask的run方法try catch了，所以不会抛出
 //            submit.get()
         }
-
+        t.shutdown();
+        t.shutdownNow();
+        t.terminated();
+        t.tryTerminate();
 //        while (true){
 //            System.out.println("当前执行完成数："+successCount);
 //        }

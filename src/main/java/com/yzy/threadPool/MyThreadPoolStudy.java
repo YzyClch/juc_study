@@ -7,6 +7,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 //import java.util.concurrent.*;
 
 public class MyThreadPoolStudy {
@@ -120,7 +121,7 @@ public class MyThreadPoolStudy {
 //        while (true){
 //            System.out.println("当前执行完成数："+successCount);
 //        }
-
+        LockSupport.park();
     }
 
 

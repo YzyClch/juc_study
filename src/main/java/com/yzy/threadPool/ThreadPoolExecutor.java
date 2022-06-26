@@ -1096,6 +1096,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
 
             try {
                 Runnable r = timed ?
+                        // 如果设置了最大空闲时间keepAliveTime，线程就会阻塞等待任务。
                     workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) // 如果允许超时就用poll()得到队列头
                         :
                     workQueue.take(); //不允许就用take()得到队列头

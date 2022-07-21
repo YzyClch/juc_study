@@ -23,7 +23,7 @@ public class ST {
     }
 
     public static void main(String[] args) {
-        new Son().doSomeThing();
+        System.out.println(15>>1);
     }
 
 }

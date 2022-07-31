@@ -260,14 +260,15 @@ abstract class Striped64 extends Number {
                 else if (a.cas(v = a.value, ((fn == null) ? v + x : // 没有传入fn，就执行相加，就是在这一步相加的。
                                              fn.applyAsLong(v, x))))
                     break;
+                //
                 else if (n >= NCPU || cells != as)
                     collide = false;            // At max size or stale
                 else if (!collide)
                     collide = true;
-                else if (cellsBusy == 0 && casCellsBusy()) {
+                else if (cellsBusy == 0 && casCellsBusy()) { //应该是cas执行相加失败后会走这一步。
                     try {
                         if (cells == as) {      // Expand table unless stale
-                            Cell[] rs = new Cell[n << 1];
+                            Cell[] rs = new Cell[n << 1]; //扩容两倍
                             for (int i = 0; i < n; ++i)
                                 rs[i] = as[i];
                             cells = rs;

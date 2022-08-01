@@ -228,8 +228,8 @@ abstract class Striped64 extends Number {
         boolean collide = false;                // True if last slot nonempty
         for (;;) {
             Cell[] as; Cell a; int n; long v;
+            // cells数组初始化完成下逻辑
             if ((as = cells) != null && (n = as.length) > 0) {
-                // cells数组初始化完成下逻辑
 
                 if ((a = as[(n - 1) & h]) == null) { //下标计算：(n - 1) & h   为空就走创建逻辑
                     if (cellsBusy == 0) {       // Try to attach new Cell
@@ -246,7 +246,7 @@ abstract class Striped64 extends Number {
                                     created = true; //创建标识改为true
                                 }
                             } finally {
-                                cellsBusy = 0;
+                                cellsBusy = 0; //释放锁
                             }
                             if (created) //创建成功退出循环 否则 重新进入循环，重新进入后就不会走创建逻辑了，因为已经被其他线程创建了
                                 break;
@@ -262,8 +262,8 @@ abstract class Striped64 extends Number {
                     break;
                 //
                 else if (n >= NCPU || cells != as)
-                    collide = false;            // At max size or stale
-                else if (!collide)
+                    collide = false;            // At max size or stale 数组长度超出cpu核数
+                else if (!collide)  //扩容会走到这步 280行continue，相当于结束了这层if else
                     collide = true;
                 else if (cellsBusy == 0 && casCellsBusy()) { //应该是cas执行相加失败后会走这一步。
                     try {
@@ -281,8 +281,8 @@ abstract class Striped64 extends Number {
                 }
                 h = advanceProbe(h);
             }
+            //cells数组为空，开始创建数组 未初始化
             else if (cellsBusy == 0 && cells == as && casCellsBusy()) {
-                //cells数组为空，开始创建数组
                 boolean init = false; //初始化标识
                 try {                           // Initialize table
                     if (cells == as) {
@@ -297,8 +297,9 @@ abstract class Striped64 extends Number {
                 if (init)
                     break; //初始化成功：退出循环，否则还会重新进入 for::
             }
+            // 如果cells数组不为空但长度为0 ，说明还没初始化完成，那就会继续在base上加。正在初始化
             else if (casBase(v = base, ((fn == null) ? v + x :
-                                        fn.applyAsLong(v, x)))) // 如果cells数组不为空但长度为0 ，说明还没初始化完成，那就会继续在base上加。
+                                        fn.applyAsLong(v, x))))
                 break;                          // Fall back on using base
         }
     }

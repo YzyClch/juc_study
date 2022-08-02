@@ -35,6 +35,7 @@
 
 package com.yzy.copy;
 import java.io.Serializable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -78,8 +79,23 @@ public class LongAdder extends Striped64 implements Serializable {
     }
 
 
-    public static void main(String[] args) {
-        System.out.println(getProbe() & 0);
+    public static void main(String[] args) throws InterruptedException {
+        LongAdder longAdder = new LongAdder();
+        AtomicLong atomicLong = new AtomicLong(0);
+        CountDownLatch countDownLatch = new CountDownLatch(10000);
+        for (int i = 0; i < 10000; i++) {
+            new Thread(()->{
+                longAdder.add(1);
+                longAdder.add(1);
+                longAdder.add(1);
+//                atomicLong.addAndGet(1);
+                countDownLatch.countDown();
+            }).start();
+
+        }
+        countDownLatch.await();
+        System.out.println(longAdder.intValue());
+        System.out.println(atomicLong.get());
     }
     /**
      * Adds the given value.

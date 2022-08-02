@@ -35,6 +35,7 @@
 
 package com.yzy.copy;
 
+import com.yzy.UnsafeUtil;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Constructor;
@@ -135,7 +136,7 @@ abstract class Striped64 extends Number {
         private static final long valueOffset;
         static {
             try {
-                UNSAFE = sun.misc.Unsafe.getUnsafe();
+                UNSAFE = UnsafeUtil.getUnsafe();
                 Class<?> ak = Cell.class;
                 valueOffset = UNSAFE.objectFieldOffset
                     (ak.getDeclaredField("value"));

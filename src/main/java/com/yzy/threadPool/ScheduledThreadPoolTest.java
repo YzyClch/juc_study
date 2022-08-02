@@ -2,7 +2,6 @@ package com.yzy.threadPool;
 
 import com.yzy.SleepUtil;
 
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -19,7 +18,7 @@ public class ScheduledThreadPoolTest {
 //        poolExecutor.scheduleWithFixedDelay();
 //        poolExecutor.scheduleAtFixedRate()
 
-        SleepUtil.sleep();
+        SleepUtil.sleep1();
     }
 
 

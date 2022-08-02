@@ -221,7 +221,7 @@ abstract class Striped64 extends Number {
     final void longAccumulate(long x, LongBinaryOperator fn,
                               boolean wasUncontended) {
         int h;
-        if ((h = getProbe()) == 0) {
+        if ((h = getProbe()) == 0) { //线程没有初始化？
             ThreadLocalRandom.current(); // force initialization
             h = getProbe();
             wasUncontended = true;
@@ -286,17 +286,17 @@ abstract class Striped64 extends Number {
             else if (cellsBusy == 0 && cells == as && casCellsBusy()) {
                 boolean init = false; //初始化标识
                 try {                           // Initialize table
-                    if (cells == as) {
+                    if (cells == as) { //可能cells == as 后线程挂起了，这时候cells发生了变化 挂起结束 cas取锁成功 ，所以进来要再校验一次。
                         Cell[] rs = new Cell[2]; //初始化数组
                         rs[h & 1] = new Cell(x); //计算下标并把元素放进去
                         cells = rs; //赋值到cells
                         init = true; //标记初始化完成
                     }
                 } finally {
-                    cellsBusy = 0; //标记不再繁忙
+                    cellsBusy = 0; //标记不再繁忙（释放锁）
                 }
                 if (init)
-                    break; //初始化成功：退出循环，否则还会重新进入 for::
+                    break; //初始化成功：退出循环，否则还会重新进入 for::，因为有(cells == as 二次校验不一致的情况
             }
             // 如果cells数组不为空但长度为0 ，说明还没初始化完成，那就会继续在base上加。正在初始化
             else if (casBase(v = base, ((fn == null) ? v + x :

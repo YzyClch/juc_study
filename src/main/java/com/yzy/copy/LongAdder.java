@@ -69,7 +69,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @since 1.8
  * @author Doug Lea
  */
-public class LongAdder extends Striped64 implements Serializable {
+public class LongAdder extends MyStriped64 implements Serializable {
     private static final long serialVersionUID = 7249069246863182397L;
 
     /**
@@ -82,9 +82,12 @@ public class LongAdder extends Striped64 implements Serializable {
     public static void main(String[] args) throws InterruptedException {
         LongAdder longAdder = new LongAdder();
         AtomicLong atomicLong = new AtomicLong(0);
-        CountDownLatch countDownLatch = new CountDownLatch(10000);
-        for (int i = 0; i < 10000; i++) {
+        CountDownLatch countDownLatch = new CountDownLatch(12000);
+        for (int i = 0; i < 12000; i++) {
             new Thread(()->{
+                longAdder.add(1);
+                longAdder.add(1);
+                longAdder.add(1);
                 longAdder.add(1);
                 longAdder.add(1);
                 longAdder.add(1);

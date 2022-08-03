@@ -143,6 +143,7 @@ public class Snowflake {
 		if (lastTimestamp == timestamp) {
 			sequence = (sequence + 1) & sequenceMask;
 			if (sequence == 0) {
+				//当这一毫秒能分配的id都用完了 到达上线4096
 				timestamp = tilNextMillis(lastTimestamp);
 			}
 		} else {

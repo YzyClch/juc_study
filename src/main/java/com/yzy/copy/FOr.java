@@ -1,5 +1,7 @@
 package com.yzy.copy;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 public class FOr {
 
     public static void main(String[] args) {
@@ -9,5 +11,7 @@ public class FOr {
             System.out.println(i);
         }
         System.out.println(i);
+
+//        new ReentrantLock()
     }
 }

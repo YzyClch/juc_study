@@ -864,7 +864,7 @@ public abstract class AbstractQueuedSynchronizer
             boolean interrupted = false;
             for (;;) {//
                 final Node p = node.predecessor(); //当前节点的上一个节点
-                if (p == head && tryAcquire(arg)) { //当前节点的上一个节点是头节点，并且获取锁成功
+                if (p == head && tryAcquire(arg)) { //当前节点的上一个节点是头节点，并且获取锁成功，这里tryAcquire是因为可能这是个非公平锁
                     setHead(node); //把当前节点设置成头节点
                     p.next = null; // help GC
                     failed = false;

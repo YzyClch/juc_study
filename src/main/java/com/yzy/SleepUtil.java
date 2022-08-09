@@ -14,4 +14,12 @@ public final class SleepUtil {
         TimeUnit.MINUTES.sleep(1);
     }
 
+    public static void sleep3(){
+
+        try {
+            TimeUnit.SECONDS.sleep(3);
+        }catch (InterruptedException ignored){}
+
+    }
+
 }

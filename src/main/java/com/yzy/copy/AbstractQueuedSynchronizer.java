@@ -663,6 +663,7 @@ public abstract class AbstractQueuedSynchronizer
                     s = t; //从尾节点向前遍历找 waitStatus<0的节点
         }
         if (s != null)
+            System.out.println("唤醒前驱节点："+s.thread.getName());
             LockSupport.unpark(s.thread); //唤醒下一个node，没调这里的时候 下一个节点还阻塞在 parkAndCheckInterrupt
     }
 

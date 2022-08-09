@@ -55,4 +55,34 @@ public class ST {
 
         SleepUtil.sleep60();
     }
+
+    @Test
+    public void test2(){
+        new Thread(()->{
+            long stamped = stampedLock.tryOptimisticRead();
+            Integer number = source.getNumber();
+            System.out.println("乐观读：number "+number);
+            SleepUtil.sleep3();
+            boolean validate = stampedLock.validate(stamped);
+            if (!validate){
+                System.out.println("升级为悲观读");
+                long rs = stampedLock.readLock(); //写锁释放才能获取到读锁
+                number= source.getNumber();
+                System.out.println("读到结果："+number);
+                SleepUtil.sleep3();
+                stampedLock.unlockRead(rs);
+            }
+
+
+        }).start();
+
+        SleepUtil.sleep1();
+
+        long s = stampedLock.writeLock();
+        Integer number = source.getNumber();
+       number+=100;
+       source.setNumber(number);
+//       stampedLock.unlockWrite(s);
+        SleepUtil.sleep60();
+    }
 }

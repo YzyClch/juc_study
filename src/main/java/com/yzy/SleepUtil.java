@@ -6,12 +6,20 @@ public final class SleepUtil {
 
 
 
-    public static void sleep1() throws InterruptedException {
-        TimeUnit.SECONDS.sleep(1);
+    public static void sleep1()   {
+        try {
+            TimeUnit.SECONDS.sleep(1);
+
+        }catch (InterruptedException ignored){
+
+        }
     }
 
-    public static void sleep60() throws InterruptedException {
-        TimeUnit.MINUTES.sleep(1);
+    public static void sleep60()   {
+        try {
+            TimeUnit.MINUTES.sleep(1);
+
+        }catch (InterruptedException i){}
     }
 
     public static void sleep3(){

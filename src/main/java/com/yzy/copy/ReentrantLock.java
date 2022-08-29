@@ -109,10 +109,13 @@ import java.util.concurrent.locks.Lock;
 public class ReentrantLock implements Lock, java.io.Serializable {
 
 
-    public static void main(String[] args) {
-        ReentrantLock r = new ReentrantLock();
-        r.lock();
-        r.unlock();
+    public static void main(String[] args) throws InterruptedException {
+//        ReentrantLock r = new ReentrantLock();
+//        Condition condition = r.newCondition();
+//        condition.await();
+//        condition.signal();
+//        r.lock();
+//        r.unlock();
     }
 
 

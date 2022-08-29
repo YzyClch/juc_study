@@ -1,10 +1,13 @@
 package com.yzy.juc;
 
+import com.yzy.SleepUtil;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -13,6 +16,36 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CompletableFutureTest {
+
+    @Test
+    public void test() throws ExecutionException, InterruptedException {
+
+        List<Integer>res=new ArrayList<>();
+
+
+        Object o = CompletableFuture.supplyAsync(s1).whenComplete((r, e) -> System.out.println(Thread.currentThread().getName())).thenApply(
+
+                new Function<Integer, Object>() {
+                    @Override
+                    public Object apply(Integer integer) {
+                        System.out.println(Thread.currentThread().getName());
+                        System.out.println("apply return null");
+                        return null;
+                    }
+                }
+        ).thenApplyAsync(new Function<Object, Object>() {
+            @Override
+            public Object apply(Object o) {
+                System.out.println(Thread.currentThread().getName());
+                System.out.println(o);
+                System.out.println("apply2 return null");
+                return null;
+            }
+        }).get();
+        System.out.println(o);
+        SleepUtil.sleep60();
+
+    }
 
     public static Supplier<Integer> s1 = () -> {
         try {
